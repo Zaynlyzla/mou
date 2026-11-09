@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5eddf">
+<meta name="description" content="A tiny pastel memory player by Emy.">
+<title>EmyTube · Memory Player</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&family=Patrick+Hand:wght@400;700&family=Special+Elite&display=swap');
+:root{
+ --cream:#f5eddf;--cream-deep:#e9dacb;--paper:#fbf5e9;--ink:#4d3942;--muted:#8b7476;
+ --pink:#efc6d8;--pink-deep:#cf95b2;--blue:#c4d8f2;--blue-deep:#819fce;
+ --lilac:#d8c9ee;--lilac-deep:#a891cb;--brown:#765348;--brown-dark:#493432;
+ --gold:#d9c58e;--line:rgba(104,77,74,.19);--shadow:0 22px 60px rgba(83,57,57,.16);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;overflow-x:hidden;color:var(--ink);font-family:'DM Sans',sans-serif;background:radial-gradient(ellipse at 14% 8%,#f9e4e9 0,transparent 34%),radial-gradient(ellipse at 88% 28%,#e7e1f4 0,transparent 31%),radial-gradient(ellipse at 57% 85%,#dce9f5 0,transparent 29%),var(--cream)}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:80;opacity:.19;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.83' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.28'/%3E%3C/svg%3E")}
+button,input,textarea{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #b6a2d7;outline-offset:3px}
+.page{width:min(100%,1050px);margin:auto;padding:25px 30px 18px;position:relative}
+.topbar{height:75px;display:flex;align-items:center;justify-content:space-between;gap:15px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px;padding:0;border:0;background:none;color:inherit;text-align:left;min-width:0}
+.brand-mark{width:56px;height:56px;border-radius:17px;background:linear-gradient(145deg,#a77b91,#745365 72%);color:#fff1e9;display:grid;place-content:center;text-align:center;line-height:.9;box-shadow:inset 3px 3px 0 #ffffff35,0 6px 13px #76556838;transform:rotate(-5deg);font:19px 'Special Elite',serif;flex:none}
+.brand-mark small{font:8px 'DM Sans',sans-serif;letter-spacing:1.3px;color:#f1d8e3;margin-top:5px}
+.brand-copy strong{display:block;font:700 25px/1 'Cormorant Garamond',serif}.brand-copy small{display:block;font:13px 'Patrick Hand',cursive;color:var(--muted);letter-spacing:.45px;margin-top:5px}
+.top-note{font:18px 'Patrick Hand',cursive;color:#79656d;text-align:right;max-width:55%}.top-note i{font-style:normal;color:#9bab8e;margin-right:6px}
+.hero{position:relative;text-align:center;padding:30px 0 0}.headline{font:400 clamp(46px,7vw,76px)/.87 'Patrick Hand',cursive;letter-spacing:-2px;margin:8px auto 0;max-width:620px;transform:rotate(-1deg);color:#65494e}.headline .blue{color:#789bd0}.headline .pink{color:#c982a4}.headline .lilac{color:#a38cc9}.headline .gold{color:#bca35f}.subhead{font:18px 'Cormorant Garamond',serif;color:#897477;margin:16px 0 0}.doodle{position:absolute;font:27px 'Patrick Hand',cursive;opacity:.8}.doodle.one{left:13%;top:100px;color:#c681a2;transform:rotate(-19deg)}.doodle.two{right:15%;top:39px;color:#7f9fca;transform:rotate(12deg)}.doodle.three{right:24%;top:153px;color:#b2a069}
+.stage-shell{width:min(100%,800px);margin:5px auto 0;perspective:1450px;perspective-origin:50% 48%;position:relative}
+.stage{height:clamp(490px,72vw,650px);min-height:490px;position:relative;transform-style:preserve-3d;touch-action:pan-y;isolation:isolate}
+.machine{position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%) rotateX(4deg) rotateY(-5deg);transform-style:preserve-3d;transition:transform .45s cubic-bezier(.2,.75,.2,1);pointer-events:none}
+.machine-shadow{position:absolute;left:8%;right:5%;bottom:5%;height:10%;border-radius:50%;background:#7c5b5933;filter:blur(23px);transform:translateZ(-55px)}
+.tv-body{position:absolute;left:15%;top:15%;width:69%;height:54%;border-radius:40px 43px 25px 24px;background:linear-gradient(145deg,#765c56 0%,#503c3b 58%,#3c3032 100%);box-shadow:inset 0 6px 2px #ffffff35,inset -9px -10px 15px #21191b55,0 14px 0 #493a3c,0 19px 21px #3d2b2d37;transform:translateZ(34px);transform-style:preserve-3d}
+.tv-body:before{content:"";position:absolute;left:17px;right:18px;top:-15px;height:17px;border-radius:23px 24px 0 0;background:linear-gradient(90deg,#97766b,#6e554f);transform:skewX(-24deg);transform-origin:bottom;box-shadow:inset 0 3px 2px #ffffff38}
+.tv-body:after{content:"";position:absolute;right:-22px;top:8px;width:23px;height:calc(100% - 14px);border-radius:0 17px 12px 0;background:linear-gradient(90deg,#49383a,#33292d);transform:skewY(-29deg);transform-origin:left;box-shadow:inset -4px 0 3px #ffffff15}
+.tv-screen-frame{position:absolute;left:4.2%;top:7.5%;width:70%;height:84%;padding:8px;border-radius:5px;background:linear-gradient(135deg,#2e292d,#17191f);box-shadow:inset 0 0 0 2px #ffffff20,0 2px 0 #b89c9c55;transform:translateZ(5px)}
+.tv-screen{position:relative;width:100%;height:100%;overflow:hidden;display:grid;place-items:center;background:linear-gradient(145deg,#c9dcf4,#9fb8de);border:1px solid #829cc3;color:#5d4d52;cursor:pointer;isolation:isolate}
+.tv-screen:before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 3px,#ffffff17 4px 5px);mix-blend-mode:screen}
+.screen-idle{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;text-align:center;padding:10px;position:relative;z-index:1}.screen-idle .flower{font-size:39px;color:#fff2cc;text-shadow:0 3px 4px #7890ad;animation:bloom 3s ease-in-out infinite}.screen-idle strong{font:20px 'Cormorant Garamond',serif;color:#65515a}.screen-idle small{font:12px 'Patrick Hand',cursive;color:#746676}
+#youtubeScreen{position:absolute;inset:0;width:100%;height:100%;border:0;display:none;background:#17141b;z-index:3}
+.tv-brand{position:absolute;right:4%;top:13%;width:21%;text-align:center;color:#d2c3b1;font:16px 'Cormorant Garamond',serif;line-height:1.05;text-shadow:0 1px 2px #281e20}.tv-brand small{display:block;font:7px 'DM Sans',sans-serif;letter-spacing:1.3px;color:#a9b8d7;margin-top:4px}
+.tv-knob{position:absolute;right:9.4%;top:42%;width:47px;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 32% 27%,#f8e9bc 0 35%,#d7c18c 39% 56%,#967b57 61% 70%,#382d30 73%);box-shadow:0 3px 4px #241a1a,inset 0 2px 3px #ffffff95;transform:translateZ(7px);display:grid;place-items:center;color:#967351;font-size:15px}
+.tv-knob.second{top:68%;background:radial-gradient(circle at 32% 27%,#f6dce6 0 35%,#d39db2 39% 57%,#936a7c 61% 70%,#382d30 73%);color:#80596d}.tv-knob.second:after{content:"Ⅱ";font-weight:800}
+.antenna{position:absolute;z-index:2;left:54%;top:6%;width:125px;height:80px;transform:translateZ(44px);pointer-events:none}.antenna:before,.antenna:after{content:"";position:absolute;left:19px;bottom:2px;width:5px;height:125px;border-radius:5px;background:linear-gradient(90deg,#342d32,#9c8a86,#29252a);transform-origin:bottom;box-shadow:2px 0 2px #ffffff55}.antenna:before{transform:rotate(-14deg)}.antenna:after{left:72px;transform:rotate(15deg)}.ant-cap{position:absolute;bottom:-2px;left:12px;width:21px;height:12px;border-radius:3px;background:linear-gradient(#e8d4a4,#a38f70);box-shadow:53px 0 #c4b18a,53px 2px 2px #493d38}
+.deck{position:absolute;left:6.5%;top:64%;width:87%;height:22%;border-radius:18px 20px 23px 22px;background:linear-gradient(145deg,#e4d9dc 0%,#cbbfc8 70%,#b5aab5 100%);box-shadow:inset 0 7px 4px #ffffff7a,inset 0 -9px 12px #81717c26,0 11px 0 #ada1ad,0 19px 17px #6f5c5c29;transform:translateZ(8px);transform-style:preserve-3d}
+.deck:before{content:"";position:absolute;left:15px;right:15px;bottom:-12px;height:14px;border-radius:0 0 18px 18px;background:linear-gradient(#aaa0ab,#8d8291);transform:skewX(-8deg)}
+.deck:after{content:"";position:absolute;right:-12px;top:10px;width:13px;height:calc(100% - 19px);border-radius:0 10px 10px 0;background:#a79ba7;transform:skewY(-25deg)}
+.disk-slot{position:absolute;left:12%;top:26%;width:49%;height:16px;border-radius:3px;background:linear-gradient(#191719,#41353a 45%,#161518);box-shadow:inset 0 4px 5px #070709,0 2px 0 #ffffff50;z-index:2;transition:box-shadow .3s}
+.disk-slot:after{content:"";position:absolute;left:8%;right:8%;top:4px;height:3px;background:linear-gradient(90deg,#9c7e7d,#e5cba0,#9f7b86);opacity:.7}
+.deck.ready .disk-slot{box-shadow:0 0 0 3px #e7cce4,0 0 24px #bd9dcf,inset 0 4px 5px #070709}
+.eject{position:absolute;left:3%;top:21%;width:38px;height:26px;border:0;border-radius:5px;background:linear-gradient(#78666d,#50454e);color:#f7eadf;box-shadow:inset 0 2px 2px #ffffff55,0 2px 2px #66565d;font-size:12px;pointer-events:auto}
+.speaker{position:absolute;left:64%;top:30%;width:73px;height:35px;background:repeating-linear-gradient(90deg,#71656c 0 2px,transparent 2px 6px);opacity:.78}
+.power-light{position:absolute;right:17%;top:37%;width:9px;height:9px;border-radius:50%;background:#a9bd9d;box-shadow:0 0 9px #c5e0ae}
+.power-button{position:absolute;right:6%;top:52%;width:58px;height:9px;border-radius:7px;background:linear-gradient(#796a70,#41373e);box-shadow:inset 0 2px 3px #2c2428}
+.deck-label{position:absolute;right:5%;bottom:13%;font:10px 'Patrick Hand',cursive;color:#847681;letter-spacing:1px}
+/* The memory cartridge: a thick, draggable 3D object. */
+.cartridge{--cartridge-width:min(48%,310px);position:absolute;z-index:20;left:50%;top:85%;width:var(--cartridge-width);aspect-ratio:2.03/1;min-width:175px;border-radius:9px 12px 13px 8px;background:linear-gradient(145deg,#6e504e,#392b31 68%,#261e25);box-shadow:0 18px 16px #47333744,inset 0 3px 2px #ffffff32,inset -5px -5px 8px #19141b66;transform:translate(-50%,-50%) translateZ(90px) rotateX(49deg) rotateZ(-7deg);transform-style:preserve-3d;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none;transition:left .72s cubic-bezier(.18,.8,.2,1),top .72s cubic-bezier(.18,.8,.2,1),width .72s cubic-bezier(.18,.8,.2,1),transform .8s cubic-bezier(.18,.8,.2,1),opacity .5s,filter .3s;filter:drop-shadow(0 7px 5px #5c444526)}
+.cartridge:before{content:"";position:absolute;left:4px;right:-7px;bottom:-13px;height:14px;border-radius:0 0 8px 9px;background:linear-gradient(90deg,#30252b,#514047,#241d24);transform:skewX(-23deg);transform-origin:top;box-shadow:0 5px 5px #34232b33}
+.cartridge:after{content:"";position:absolute;top:6px;right:-10px;width:10px;height:calc(100% - 3px);border-radius:0 7px 7px 0;background:linear-gradient(90deg,#514048,#2c222a);transform:skewY(-32deg);transform-origin:left;box-shadow:2px 2px 3px #2b2024}
+.cartridge.dragging{cursor:grabbing;transition:none;filter:drop-shadow(0 18px 10px #513f3f55);z-index:40}
+.cartridge-top{position:absolute;inset:9px 11px 11px;border-radius:5px 8px 8px 5px;background:linear-gradient(145deg,#765651,#48343a);box-shadow:inset 0 1px 2px #ffffff45,inset 0 -3px 4px #160f16;overflow:hidden}
+.cartridge-art{position:absolute;left:17%;right:11%;top:15%;bottom:13%;border:5px solid #d5c39b;border-radius:4px;background:repeating-linear-gradient(90deg,#b38d8c 0 9px,#ead9bc 9px 18px),repeating-linear-gradient(0deg,transparent 0 9px,#f4e6d0 9px 18px);background-blend-mode:multiply;box-shadow:0 2px 3px #241b1c75;display:grid;place-items:center;color:#77504e;text-align:center}
+.cartridge-art:before{content:"✿   ♡   ✿";font:clamp(15px,2.8vw,23px) 'Cormorant Garamond',serif;letter-spacing:3px;text-shadow:0 1px 0 #f8e9cb}
+.cartridge-name{position:absolute;left:0;right:0;bottom:3px;text-align:center;color:#f1e4d6;font:700 9px 'DM Sans',sans-serif;letter-spacing:1px}
+.cartridge-shutter{position:absolute;left:8%;top:8%;width:32%;height:9px;border-radius:3px;background:linear-gradient(#20191e,#514047);box-shadow:inset 0 2px 3px #09080b}
+.cartridge-shutter:after{content:"";position:absolute;right:5px;top:2px;width:20px;height:4px;background:linear-gradient(90deg,#8a7773,#d8bd9e);border-radius:2px}
+.cartridge.inserted{left:var(--slot-x,38%);top:var(--slot-y,75%);width:var(--slot-w,220px);transform:translate(-50%,-50%) translateZ(21px) rotateX(49deg) rotateZ(0deg) scaleY(.2);opacity:.96;filter:drop-shadow(0 3px 2px #47333735);cursor:default}
+.cartridge.inserted .cartridge-art,.cartridge.inserted .cartridge-name{opacity:0}
+.cartridge.inserted .cartridge-shutter{top:30%;height:7px;width:76%}
+.cartridge.inserted .cartridge-top{background:linear-gradient(90deg,#4b383d,#765b60,#403138)}
+.cartridge.inserted:before{bottom:-7px;height:8px}
+.drag-tip{position:absolute;left:50%;bottom:0;transform:translateX(-50%);font:16px 'Patrick Hand',cursive;color:#81666b;text-align:center;white-space:nowrap;pointer-events:none}
+.hintline{font:22px 'Patrick Hand',cursive;color:#795b65;text-align:center;margin:0 0 14px}.hintline span{color:#bd86a6;margin-right:8px}
+.controls{display:flex;justify-content:center;align-items:center;gap:14px;flex-wrap:wrap;font-size:12px;color:#907d7c;margin:8px auto 20px}.controls .instruction{margin-right:6px}.icon-btn{width:34px;height:34px;border:1px solid #bda9b1;border-radius:50%;background:#f7efe7b8;color:#72565f;font-size:17px;display:grid;place-items:center;transition:.2s}.icon-btn:hover{background:#fff8f0;transform:translateY(-2px)}
+.status{text-align:center;font:600 29px/1.15 'Cormorant Garamond',serif;color:#60484e;margin:15px auto 17px}.action-row{display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap}.primary{border:0;border-radius:17px;padding:14px 28px;color:#fff4e8;background:linear-gradient(135deg,#916477,#765263 70%,#694b5b);box-shadow:0 7px 0 #694c5a28,inset 0 1px 0 #ffffff45;font-weight:800;transition:transform .2s,box-shadow .2s}.primary:hover{transform:translateY(-2px);box-shadow:0 10px 16px #76526336}.primary:active{transform:translateY(1px)}.primary .plus{color:#d8e5f9;font-size:19px;margin-right:7px}
+.round-btn{width:53px;height:53px;border:1px solid #ad8e9c;border-radius:50%;background:#f9f0e6b8;color:#765667;font-size:20px;transition:.2s}.round-btn:hover{background:#fff9f1;transform:rotate(-6deg)}.privacy{text-align:center;font-size:12px;color:#9a8581;margin:15px 0 32px}
+.footer{border-top:1px solid var(--line);padding:18px 0 5px;display:flex;align-items:center;justify-content:space-between;gap:12px;color:#816f73;font-size:12px}.footer .motto{font:20px 'Patrick Hand',cursive;color:#765d69}.footer button{border:0;background:none;color:inherit;text-decoration:underline;text-decoration-color:#c8aeb7;text-underline-offset:3px;font-size:11px}
+/* Dialogs */
+.overlay{position:fixed;inset:0;z-index:100;background:#47343f70;backdrop-filter:blur(9px);display:none;align-items:center;justify-content:center;padding:16px;overflow:auto}.overlay.show{display:flex;animation:fade .22s ease}
+.modal{position:relative;width:min(100%,730px);max-height:94dvh;overflow-y:auto;padding:28px 30px 25px;border-radius:29px;border:1px solid #ffffff9c;background:linear-gradient(145deg,#fff8eb,#f3e8df 70%,#eee5ef);box-shadow:0 25px 100px #30202b55}
+.modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:23px}.modal h2{margin:0;color:#634a4b;font:600 37px/1 'Cormorant Garamond',serif}.modal-head p{margin:7px 0 0;color:#8b7476;font:15px 'Cormorant Garamond',serif}.close{border:0;background:none;color:#856a70;font-size:27px;line-height:1;padding:0 5px}
+.form-grid{display:grid;grid-template-columns:137px minmax(0,1fr);gap:23px;align-items:center}.disk-preview{height:151px;padding:10px;border-radius:17px;background:linear-gradient(145deg,#946f7a,#614b55);display:flex;flex-direction:column;justify-content:space-between;color:#fff2e9;font-size:10px;font-weight:800;letter-spacing:.8px;transform:rotate(-5deg);box-shadow:0 8px 16px #604a5735}.preview-art{height:100px;border:4px solid #ddcfa8;border-radius:5px;background:repeating-linear-gradient(90deg,#b38d8c 0 8px,#ead9bc 8px 16px);display:grid;place-items:center;color:#76535e;font-size:22px}
+.field{margin-bottom:15px}.field label,.field-label{display:block;margin-bottom:7px;color:#654d51;font-size:13px;font-weight:800}.field small{font-weight:400;color:#927e80}.field input,.field textarea{width:100%;padding:12px 14px;border:1px solid #d7c3bf;border-radius:14px;background:#ffffff55;color:#59464c;outline:0;transition:.2s}.field input:focus,.field textarea:focus{border-color:#b18ba9;box-shadow:0 0 0 3px #d9c6e655}.field textarea{min-height:82px;resize:vertical;font:17px 'Patrick Hand',cursive}.field input::placeholder,.field textarea::placeholder{color:#a18b8b}.under{display:flex;justify-content:space-between;margin-top:5px;color:#947f80;font-size:11px}
+.patterns{display:flex;gap:8px;flex-wrap:wrap}.pattern{width:43px;height:43px;padding:3px;border:2px solid transparent;border-radius:11px;background:#ddcbbf;overflow:hidden}.pattern.selected{border-color:#916a83;box-shadow:0 0 0 2px #e4cede}.pattern span{display:block;width:100%;height:100%;border-radius:6px;background:repeating-linear-gradient(90deg,#b68b99 0 5px,#ead9c2 5px 10px),repeating-linear-gradient(0deg,transparent 0 5px,#fff0dc 5px 10px)}.pattern:nth-child(2) span{background:repeating-linear-gradient(90deg,#8c9eb3 0 6px,#e7d9c7 6px 12px)}.pattern:nth-child(3) span{background:repeating-linear-gradient(135deg,#ba9a77 0 7px,#f0dec0 7px 14px)}.pattern:nth-child(4) span{background:repeating-linear-gradient(90deg,#a68bae 0 6px,#ead9c9 6px 12px),repeating-linear-gradient(0deg,transparent 0 6px,#f5e7d2 6px 12px)}
+.form-separator{border:0;border-top:1px solid #e1d0c9;margin:18px 0 21px}.two-col{display:grid;grid-template-columns:1fr 1fr;gap:17px}.duration{display:flex;gap:5px;width:max-content;max-width:100%;padding:4px;border-radius:30px;background:#e9dedb}.duration button{border:0;border-radius:25px;padding:10px 15px;background:transparent;color:#765e63;font-size:12px;font-weight:700}.duration button.selected{background:#856176;color:#fff2e7;box-shadow:0 2px 5px #60435238}.note-text{margin-top:10px;color:#907c7b;font-size:11px;line-height:1.6}.form-bottom{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-top:23px;padding-top:19px;border-top:1px solid #e1d0c9}.form-bottom p{max-width:360px;margin:0;color:#927e80;font-size:11px;line-height:1.55}.form-error{display:none;color:#a44e68;font-size:12px;margin:9px 0 0}.form-error.show{display:block}.settings-modal{width:min(100%,490px)}.settings-modal .field{margin-top:17px}
+.toast{position:fixed;z-index:150;left:50%;bottom:25px;max-width:90%;padding:12px 19px;border-radius:30px;background:#644d5b;color:#fff4e9;text-align:center;font-size:12px;box-shadow:0 8px 25px #3d293944;opacity:0;pointer-events:none;transform:translate(-50%,18px);transition:.28s}.toast.show{opacity:1;transform:translate(-50%,0)}
+@keyframes bloom{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-7px) rotate(5deg)}}@keyframes fade{from{opacity:0}to{opacity:1}}
+@media(max-width:650px){.page{padding:13px 17px 15px}.topbar{height:65px}.brand-mark{width:47px;height:47px;border-radius:15px;font-size:16px}.brand-copy strong{font-size:21px}.brand-copy small{font-size:11px}.top-note{font-size:13px;max-width:44%}.hero{padding-top:27px}.headline{font-size:clamp(43px,11vw,58px)}.subhead{font-size:15px}.doodle.one{left:4%;top:93px}.doodle.two{right:5%;top:25px}.doodle.three{right:12%;top:144px}.stage-shell{margin-top:0}.stage{height:clamp(490px,135vw,580px);min-height:490px}.tv-body{left:8%;top:12%;width:83%;height:58%;border-radius:29px 32px 18px 18px}.tv-body:before{left:12px;right:12px;top:-12px;height:13px}.tv-body:after{right:-16px;width:17px}.tv-screen-frame{left:3.5%;top:8%;width:77%;height:77%;padding:5px}.tv-brand{right:3.5%;width:17%;font-size:11px}.tv-brand small{font-size:6px}.tv-knob{width:32px}.antenna{left:52%;transform:translateZ(44px) scale(.79);transform-origin:bottom left}.deck{left:4%;top:64%;width:91%;height:21%;border-radius:13px 15px 17px 16px}.disk-slot{top:25%;height:12px}.eject{width:31px;height:22px}.speaker{width:54px;height:28px}.power-button{width:43px}.cartridge{--cartridge-width:min(51%,265px);top:85%;min-width:168px}.cartridge-top{inset:7px 9px 9px}.cartridge-art{border-width:4px}.cartridge-name{font-size:7px}.drag-tip{font-size:14px;bottom:-2px}.controls{gap:9px;font-size:10px;margin-top:1px}.controls .instruction{width:100%;text-align:center;margin:0}.status{font-size:25px;margin:12px auto 15px}.primary{padding:13px 21px}.round-btn{width:49px;height:49px}.footer{font-size:10px}.footer .motto{font-size:17px}.modal{padding:22px 18px 20px;border-radius:23px;max-height:94dvh}.modal h2{font-size:32px}.form-grid{grid-template-columns:91px minmax(0,1fr);gap:14px}.disk-preview{height:122px;padding:7px;font-size:8px}.preview-art{height:80px}.field{margin-bottom:13px}.field input{padding:11px 12px}.two-col{gap:10px}.form-bottom{align-items:flex-end}.form-bottom p{max-width:190px}.form-bottom .primary{padding:12px 17px}.duration button{padding:9px 12px}}
+@media(max-width:390px){.page{padding-left:13px;padding-right:13px}.brand-copy strong{font-size:19px}.top-note{font-size:11px}.stage{height:490px}.tv-body{left:8%;width:83%;height:58%;top:12%}.deck{left:2%;width:94%}.cartridge{--cartridge-width:min(55%,235px);}.form-grid{grid-template-columns:78px minmax(0,1fr);gap:11px}.disk-preview{height:108px}.preview-art{height:69px}.two-col{grid-template-columns:1fr;gap:0}.form-bottom p{max-width:155px}}
+
+@media(max-width:350px){.page{padding-left:7px;padding-right:7px}.tv-body{left:6%;width:88%}.tv-screen-frame{width:82%}.tv-brand{right:2%;width:14%;font-size:10px}.tv-knob{right:5%;width:27px}.cartridge{--cartridge-width:min(54%,215px)}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<main class="page">
+ <header class="topbar">
+  <button class="brand" id="brandButton" type="button" aria-label="Edit player name"><span class="brand-mark" id="brandMark">EMY<small>MEMORY</small></span><span class="brand-copy"><strong id="brandName">EmyTube</strong><small id="brandSub">MEMORY PLAYER · a little place for us</small></span></button>
+  <div class="top-note"><i>✿</i><span id="tagline">Short memories, long-lasting feelings</span></div>
+ </header>
+ <section class="hero"><span class="doodle one">♡</span><span class="doodle two">☁</span><span class="doodle three">✧</span><h1 class="headline"><span class="blue">Put</span> a <span class="pink">memory</span><br><span class="gold">o</span><span class="lilac">n.</span></h1><p class="subhead">One little disk. One song. A moment that stays.</p></section>
+ <section class="stage-shell" aria-label="3D memory player">
+  <div class="stage" id="stage">
+   <div class="machine" id="machine">
+    <div class="machine-shadow"></div>
+    <div class="antenna"><span class="ant-cap"></span></div>
+    <div class="tv-body">
+     <div class="tv-screen-frame"><div class="tv-screen" id="tvScreen" aria-label="TV screen">
+      <div class="screen-idle" id="screenIdle"><span class="flower">✿</span><strong id="screenTitle">a little memory</strong><small id="screenSubtitle">your song will play here</small></div>
+      <iframe id="youtubeScreen" title="YouTube memory player" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+     </div></div>
+     <div class="tv-brand"><span id="tvBrand">EmyTube</span><small>MEMORY PLAYER</small></div>
+     <div class="tv-knob">●</div><div class="tv-knob second"></div>
+    </div>
+    <div class="deck" id="deck">
+     <div class="disk-slot" id="diskSlot" aria-label="Memory disk slot"></div>
+     <button class="eject" id="ejectButton" type="button" title="Eject disk">▲</button>
+     <div class="speaker"></div><div class="power-light"></div><div class="power-button"></div><div class="deck-label">M·P / 01</div>
+    </div>
+   </div>
+   <div class="cartridge" id="cartridge" role="button" tabindex="0" aria-label="Drag memory disk into the player slot">
+    <div class="cartridge-top"><div class="cartridge-shutter"></div><div class="cartridge-art" id="cartridgeArt"></div><div class="cartridge-name" id="cartridgeName">MEMORY / 01</div></div>
+   </div>
+   <div class="drag-tip" id="dragTip">drag your memory disk into the slot ↑</div>
+  </div>
+ </section>
+ <div class="hintline" id="hintline"><span>—</span> slide your memory in</div>
+ <div class="controls"><span class="instruction">Drag to turn · tap the screen to focus</span><button class="icon-btn" id="focusButton" type="button" title="Focus screen">⌗</button><button class="icon-btn" id="zoomOut" type="button" title="Zoom out">−</button><button class="icon-btn" id="zoomIn" type="button" title="Zoom in">＋</button><button class="icon-btn" id="resetButton" type="button" title="Reset view">↶</button></div>
+ <h2 class="status" id="statusText">Your disk is ready. Slide it in.</h2>
+ <div class="action-row" id="actionRow"><button class="primary" id="changeButton" type="button"><span class="plus">＋</span>Change memory</button></div>
+ <p class="privacy" id="privacyText">Only people with your link can open your memory.</p>
+ <footer class="footer"><span>a small collection of good days</span><span class="motto">Only here, only yours.</span><button id="footerBrand" type="button">©2026 Emy Studio</button></footer>
+</main>
+
+<!-- Create memory: deliberately YouTube-only, no photo upload. -->
+<div class="overlay" id="createOverlay" role="dialog" aria-modal="true" aria-labelledby="createTitle">
+ <form class="modal" id="memoryForm">
+  <div class="modal-head"><div><h2 id="createTitle">A memory, made yours.</h2><p>One video. One song. A few seconds to keep.</p></div><button type="button" class="close" data-close="createOverlay" aria-label="Close">×</button></div>
+  <div class="form-grid">
+   <div class="disk-preview"><div class="preview-art" id="previewArt">✿ ♡</div><span>MEMORY / 01</span></div>
+   <div>
+    <div class="field"><label for="memoryName">Memory name</label><input id="memoryName" maxlength="18" placeholder="Blue hour" required><div class="under"><span>1–3 words, a moment in a name.</span><span id="nameCount">0 / 18</span></div></div>
+    <div class="field"><span class="field-label">Disk pattern</span><div class="patterns" id="patterns"><button type="button" class="pattern selected" data-pattern="0" aria-label="Pattern one"><span></span></button><button type="button" class="pattern" data-pattern="1" aria-label="Pattern two"><span></span></button><button type="button" class="pattern" data-pattern="2" aria-label="Pattern three"><span></span></button><button type="button" class="pattern" data-pattern="3" aria-label="Pattern four"><span></span></button></div></div>
+   </div>
+  </div>
+  <hr class="form-separator">
+  <div class="field"><label for="youtubeLink">YouTube link <small>(video or music)</small></label><input id="youtubeLink" type="url" placeholder="Paste a YouTube link..." required><div class="under"><span>The video will appear inside the TV screen. Tap just play for sound.</span><span>♪</span></div></div>
+  <hr class="form-separator">
+  <div class="two-col"><div class="field"><label for="fromName">From</label><input id="fromName" maxlength="35" placeholder="your name" required></div><div class="field"><label for="toName">To</label><input id="toName" maxlength="35" placeholder="their name" required></div></div>
+  <div class="field"><label for="memoryNote">Note inside <small>(optional)</small></label><textarea id="memoryNote" maxlength="350" placeholder="this made me think of you."></textarea></div>
+  <hr class="form-separator">
+  <div class="field"><span class="field-label">How long it keeps</span><div class="duration" id="duration"><button type="button" data-days="1">1 day</button><button type="button" data-days="2">2 days</button><button type="button" class="selected" data-days="3">3 days</button></div><p class="note-text">Counted from when you make the disk. This browser copy expires after the selected time.</p></div>
+  <p class="form-error" id="formError"></p>
+  <div class="form-bottom"><p>Your memory contains a YouTube link and a personal note. The recipient can play the video directly inside the TV.</p><button type="submit" class="primary">Make disk&nbsp; ↗</button></div>
+ </form>
+</div>
+
+<div class="overlay" id="settingsOverlay" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+ <form class="modal settings-modal" id="settingsForm">
+  <div class="modal-head"><div><h2 id="settingsTitle">Make it yours.</h2><p>Change the name printed on your little player.</p></div><button type="button" class="close" data-close="settingsOverlay" aria-label="Close">×</button></div>
+  <div class="field"><label for="brandInput">Player name</label><input id="brandInput" maxlength="22" placeholder="EmyTube"></div>
+  <div class="field"><label for="subInput">Small label</label><input id="subInput" maxlength="40" placeholder="MEMORY PLAYER · a little place for us"></div>
+  <div class="field"><label for="taglineInput">Top tagline</label><input id="taglineInput" maxlength="55" placeholder="Short memories, long-lasting feelings"></div>
+  <div class="form-bottom"><p>Your player name is saved in this browser. You can change it whenever you like.</p><button class="primary" type="submit">Save name ♡</button></div>
+ </form>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(()=>{
+ 'use strict';
+ const $=id=>document.getElementById(id);
+ const defaults={name:'EmyTube',sub:'MEMORY PLAYER · a little place for us',tagline:'Short memories, long-lasting feelings'};
+ const state={memory:null,pattern:0,days:3,rotation:0,zoom:1,turning:false,lastX:0,lastY:0,dragging:false,dragMoved:false,startX:0,startY:0,diskX:0,diskY:0,originalWidth:0};
+ const parse=(s,f)=>{try{return JSON.parse(s)||f}catch{return f}};
+ const config=()=>parse(localStorage.getItem('emytube_3d_config'),defaults);
+ const memory=()=>parse(localStorage.getItem('emytube_3d_memory'),null);
+ function toast(text){const el=$('toast');el.textContent=text;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),2800)}
+ function open(id){$(id).classList.add('show');document.body.style.overflow='hidden'}
+ function close(id){$(id).classList.remove('show');if(!document.querySelector('.overlay.show'))document.body.style.overflow=''}
+ document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>close(b.dataset.close)));
+ document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)close(o.id)}));
+ function applyConfig(c){$('brandName').textContent=c.name;$('tvBrand').textContent=c.name;$('brandSub').textContent=c.sub;$('tagline').textContent=c.tagline;$('footerBrand').textContent='©2026 '+c.name+' Studio';$('brandMark').innerHTML=esc(c.name.replace(/[^a-z0-9]/gi,'').slice(0,4).toUpperCase()||'EMY')+'<small>MEMORY</small>';$('screenTitle').textContent=c.name+' memories';document.title=c.name+' · Memory Player'}
+ function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+ function youtubeId(value){try{const u=new URL(value);const h=u.hostname.replace(/^www\./,'');if(h==='youtu.be')return u.pathname.split('/').filter(Boolean)[0]||null;if(h.endsWith('youtube.com')){if(u.searchParams.get('v'))return u.searchParams.get('v');const m=u.pathname.match(/\/(?:embed|shorts|live)\/([^/?]+)/);return m?m[1]:null}}catch{}return null}
+ function validYoutube(value){const id=youtubeId(value);return !!id&&/^[\w-]{11}$/.test(id)}
+ const patterns=[
+  'repeating-linear-gradient(90deg,#b58e91 0 9px,#ead9bd 9px 18px),repeating-linear-gradient(0deg,transparent 0 9px,#f7e7d2 9px 18px)',
+  'repeating-linear-gradient(90deg,#8198b4 0 9px,#e8d9c8 9px 18px),repeating-linear-gradient(0deg,transparent 0 9px,#f7e7d2 9px 18px)',
+  'repeating-linear-gradient(135deg,#b99c76 0 9px,#f0dfc1 9px 18px)',
+  'repeating-linear-gradient(90deg,#a38caf 0 9px,#e9d8cb 9px 18px),repeating-linear-gradient(0deg,transparent 0 9px,#f7e7d2 9px 18px)'
+ ];
+ function setPattern(n){state.pattern=n;document.querySelectorAll('.pattern').forEach(b=>b.classList.toggle('selected',Number(b.dataset.pattern)===n));$('cartridgeArt').style.background=patterns[n];$('previewArt').style.background=patterns[n]}
+ document.querySelectorAll('.pattern').forEach(b=>b.addEventListener('click',()=>setPattern(Number(b.dataset.pattern))));
+ document.querySelectorAll('#duration button').forEach(b=>b.addEventListener('click',()=>{state.days=Number(b.dataset.days);document.querySelectorAll('#duration button').forEach(x=>x.classList.toggle('selected',x===b))}));
+ $('memoryName').addEventListener('input',()=>$('nameCount').textContent=$('memoryName').value.length+' / 18');
+ function stopVideo(){const frame=$('youtubeScreen');frame.src='';frame.style.display='none';$('screenIdle').style.display='flex'}
+ function setScreenIdle(title,subtitle){stopVideo();$('screenTitle').textContent=title||'a little memory';$('screenSubtitle').textContent=subtitle||'your song will play here'}
+ function saveMemory(m){state.memory=m;localStorage.setItem('emytube_3d_memory',JSON.stringify(m))}
+ function defaultDiskPosition(){const disk=$('cartridge');disk.classList.remove('inserted','dragging');disk.style.left='50%';disk.style.top='85%';disk.style.width='';disk.style.setProperty('--slot-x','38%');disk.style.setProperty('--slot-y','75%');disk.style.setProperty('--slot-w','220px');}
+ function showCreate(){const m=state.memory;$('memoryForm').reset();$('formError').classList.remove('show');if(m){$('memoryName').value=m.title;$('fromName').value=m.from;$('toName').value=m.to;$('youtubeLink').value=m.youtube;$('memoryNote').value=m.note||'';$('nameCount').textContent=m.title.length+' / 18';setPattern(m.pattern||0);state.days=m.days||3}else{$('nameCount').textContent='0 / 18';state.days=3;setPattern(0)}document.querySelectorAll('#duration button').forEach(x=>x.classList.toggle('selected',Number(x.dataset.days)===state.days));open('createOverlay')}
+ function render(){const m=state.memory;const inserted=!!(m&&m.inserted);$('deck').classList.toggle('ready',inserted);$('hintline').innerHTML=inserted?'<span>—</span> disk secured · your memory is ready':'<span>—</span> slide your memory in';$('dragTip').style.display=inserted?'none':'block';$('statusText').textContent=inserted?(m.title+' is tucked inside. Press play.'):'Your disk is ready. Slide it in.';$('privacyText').textContent=m?'Only people with your link can open your memory.':'Make a little disk, then slide it into your player.';$('actionRow').innerHTML='';
+  if(inserted){const play=document.createElement('button');play.className='primary';play.innerHTML='▶&nbsp; just play';play.addEventListener('click',playOnTV);$('actionRow').appendChild(play);const eject=document.createElement('button');eject.className='round-btn';eject.textContent='↶';eject.title='Eject disk';eject.addEventListener('click',ejectDisk);$('actionRow').appendChild(eject);$('cartridge').classList.add('inserted');$('cartridge').setAttribute('aria-label','Memory disk inserted');$('cartridgeName').textContent=(m.title||'MEMORY').toUpperCase()}
+  else{$('cartridge').classList.remove('inserted');const change=document.createElement('button');change.className='primary';change.innerHTML='<span class="plus">＋</span>Change memory';change.addEventListener('click',showCreate);$('actionRow').appendChild(change);const share=document.createElement('button');share.className='round-btn';share.textContent='♧';share.title='Share memory';share.addEventListener('click',shareMemory);$('actionRow').appendChild(share);$('cartridgeName').textContent=m?(m.title||'MEMORY').toUpperCase():'MEMORY / 01'}
+  if(!m){setScreenIdle(config().name+' memories','your song will play here')}
+  else if(!inserted){setScreenIdle(m.title,'slide the disk into the player')}
+  else{stopVideo();$('screenTitle').textContent=m.title;$('screenSubtitle').textContent='press ▶ just play to watch';}
+ }
+ function getDiskDefault(){const el=$('cartridge'),r=el.getBoundingClientRect(),s=$('stage').getBoundingClientRect();return {x:r.left+r.width/2-s.left,y:r.top+r.height/2-s.top,width:r.width}}
+ function insertDisk(){if(!state.memory){defaultDiskPosition();showCreate();return}const disk=$('cartridge'),slot=$('diskSlot'),stage=$('stage'),sr=stage.getBoundingClientRect(),r=slot.getBoundingClientRect();const x=r.left+r.width/2-sr.left,y=r.top+r.height/2-sr.top+7;const width=Math.min(disk.getBoundingClientRect().width,r.width*1.24);disk.style.setProperty('--slot-x',x+'px');disk.style.setProperty('--slot-y',y+'px');disk.style.setProperty('--slot-w',width+'px');disk.style.left=x+'px';disk.style.top=y+'px';disk.style.width=width+'px';if(state.memory){state.memory.inserted=true;saveMemory(state.memory)}render();toast('Disk slid inside. Your TV is ready ♡')}
+ function ejectDisk(){if(!state.memory)return;state.memory.inserted=false;saveMemory(state.memory);stopVideo();defaultDiskPosition();render();toast('Disk ejected. Drag it in again whenever you like.')}
+ function isOverSlot(){const disk=$('cartridge').getBoundingClientRect(),slot=$('diskSlot').getBoundingClientRect();const cx=disk.left+disk.width/2,cy=disk.top+disk.height/2;return cx>slot.left-70&&cx<slot.right+70&&cy>slot.top-70&&cy<slot.bottom+85}
+ const cartridge=$('cartridge');
+ cartridge.addEventListener('pointerdown',e=>{if(state.memory&&state.memory.inserted)return;if(e.button!==undefined&&e.button!==0)return;e.preventDefault();const stage=$('stage').getBoundingClientRect(),r=cartridge.getBoundingClientRect();state.dragging=true;state.dragMoved=false;state.startX=e.clientX;state.startY=e.clientY;state.diskX=r.left+r.width/2-stage.left;state.diskY=r.top+r.height/2-stage.top;cartridge.style.left=state.diskX+'px';cartridge.style.top=state.diskY+'px';cartridge.classList.add('dragging');cartridge.setPointerCapture(e.pointerId)});
+ cartridge.addEventListener('pointermove',e=>{if(!state.dragging)return;const dx=e.clientX-state.startX,dy=e.clientY-state.startY;if(Math.abs(dx)+Math.abs(dy)>5)state.dragMoved=true;cartridge.style.left=(state.diskX+dx)+'px';cartridge.style.top=(state.diskY+dy)+'px'});
+ function finishDiskDrag(){if(!state.dragging)return;state.dragging=false;cartridge.classList.remove('dragging');if(state.dragMoved&&isOverSlot()){insertDisk()}else if(state.dragMoved){defaultDiskPosition();toast('Almost! Drop the disk right over the slot.')}else{defaultDiskPosition();toast('Drag the disk toward the slot on the player.')}}
+ cartridge.addEventListener('pointerup',finishDiskDrag);cartridge.addEventListener('pointercancel',finishDiskDrag);cartridge.addEventListener('lostpointercapture',()=>{if(state.dragging)finishDiskDrag()});
+ cartridge.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&!state.memory?.inserted){e.preventDefault();if(state.memory){insertDisk()}else showCreate()}});
+ $('memoryForm').addEventListener('submit',e=>{e.preventDefault();const title=$('memoryName').value.trim(),from=$('fromName').value.trim(),to=$('toName').value.trim(),youtube=$('youtubeLink').value.trim();let error='';if(!title||!from||!to||!youtube)error='Please complete the memory name, YouTube link, From, and To.';else if(!validYoutube(youtube))error='That YouTube link does not look valid. Try a normal video or youtu.be link.';if(error){$('formError').textContent=error;$('formError').classList.add('show');return}
+  const m={v:2,title,from,to,youtube,note:$('memoryNote').value.trim(),pattern:state.pattern,days:state.days,createdAt:Date.now(),expiresAt:Date.now()+state.days*86400000,inserted:false};stopVideo();saveMemory(m);defaultDiskPosition();close('createOverlay');render();toast('Your memory disk is ready. Now slide it into the slot ♡')});
+ function playOnTV(){const m=state.memory;if(!m||!m.inserted)return;if(m.expiresAt&&Date.now()>m.expiresAt){localStorage.removeItem('emytube_3d_memory');state.memory=null;render();toast('This memory has reached the end of its keeping time.');return}const id=youtubeId(m.youtube);if(!id){toast('Add a valid YouTube link to this memory first.');showCreate();return}const iframe=$('youtubeScreen');$('screenIdle').style.display='none';iframe.style.display='block';iframe.src='https://www.youtube.com/embed/'+encodeURIComponent(id)+'?autoplay=1&playsinline=1&controls=1&rel=0&iv_load_policy=3&fs=1';$('statusText').textContent='Now playing · '+m.title;toast('Your YouTube memory is playing inside the TV ♡')}
+ $('tvScreen').addEventListener('click',()=>{if(state.memory&&state.memory.inserted)playOnTV();else toast('Slide your memory disk into the player first.')});
+ $('ejectButton').addEventListener('click',e=>{e.stopPropagation();ejectDisk()});$('changeButton').addEventListener('click',showCreate);
+ $('focusButton').addEventListener('click',()=>{const m=state.memory;if(!m||!m.inserted){toast('Slide a memory disk in first.');return}const machine=$('machine');machine.style.transform='translate(-50%,-50%) rotateX(1deg) rotateY(0deg) scale(1.04)';setTimeout(()=>machine.style.transform='translate(-50%,-50%) rotateX(4deg) rotateY(-5deg)',900)});
+ function applyView(){ $('machine').style.transform=`translate(-50%,-50%) rotateX(4deg) rotateY(${state.rotation}deg) scale(${state.zoom})` }
+ $('zoomIn').addEventListener('click',()=>{state.zoom=Math.min(1.16,state.zoom+.05);applyView()});$('zoomOut').addEventListener('click',()=>{state.zoom=Math.max(.82,state.zoom-.05);applyView()});$('resetButton').addEventListener('click',()=>{state.rotation=0;state.zoom=1;applyView()});
+ $('stage').addEventListener('pointerdown',e=>{if(e.target.closest('#cartridge')||e.target.closest('button')||e.target.closest('iframe'))return;state.turning=true;state.lastX=e.clientX;$('stage').setPointerCapture(e.pointerId)});
+ $('stage').addEventListener('pointermove',e=>{if(!state.turning)return;state.rotation=Math.max(-13,Math.min(13,state.rotation+(e.clientX-state.lastX)*.35));state.lastX=e.clientX;applyView()});
+ const stopTurn=()=>state.turning=false;$('stage').addEventListener('pointerup',stopTurn);$('stage').addEventListener('pointercancel',stopTurn);$('stage').addEventListener('lostpointercapture',stopTurn);
+ function sharePayload(m){return {v:2,title:m.title,from:m.from,to:m.to,youtube:m.youtube,note:m.note,pattern:m.pattern,days:m.days,expiresAt:m.expiresAt}}
+ async function shareMemory(){const m=state.memory;if(!m){toast('Make a memory disk first.');return}const data=btoa(unescape(encodeURIComponent(JSON.stringify(sharePayload(m)))));const link=location.href.split('#')[0]+'#memory='+data;try{if(navigator.share)await navigator.share({title:m.title,text:'A little memory from '+m.from+' for '+m.to+'.',url:link});else if(navigator.clipboard){await navigator.clipboard.writeText(link);toast('Memory link copied ♡')}else prompt('Copy this link:',link)}catch(e){if(e.name!=='AbortError')toast('Could not open sharing on this device.')}}
+ async function loadShared(){const match=location.hash.match(/(?:^#|&)memory=([^&]+)/);if(!match)return;try{const p=JSON.parse(decodeURIComponent(escape(atob(match[1]))));if(p.v!==2||!validYoutube(p.youtube))return;if(p.expiresAt&&Date.now()>p.expiresAt){toast('This shared memory has expired.');return}state.memory={...p,inserted:false,shared:true};saveMemory(state.memory);setPattern(p.pattern||0);toast('A little memory arrived for you ♡')}catch{}}
+ $('brandButton').addEventListener('click',()=>{const c=config();$('brandInput').value=c.name;$('subInput').value=c.sub;$('taglineInput').value=c.tagline;open('settingsOverlay')});$('footerBrand').addEventListener('click',()=>$('brandButton').click());
+ $('settingsForm').addEventListener('submit',e=>{e.preventDefault();const c={name:$('brandInput').value.trim()||defaults.name,sub:$('subInput').value.trim()||defaults.sub,tagline:$('taglineInput').value.trim()||defaults.tagline};localStorage.setItem('emytube_3d_config',JSON.stringify(c));applyConfig(c);close('settingsOverlay');toast('Your player has a new name ♡')});
+ async function init(){applyConfig(config());state.memory=memory();if(state.memory&&state.memory.expiresAt&&Date.now()>state.memory.expiresAt){localStorage.removeItem('emytube_3d_memory');state.memory=null}await loadShared();if(state.memory){setPattern(state.memory.pattern||0);if(state.memory.inserted){state.memory.inserted=false;saveMemory(state.memory)}}render();defaultDiskPosition()}
+ init();
+})();
+</script>
+</body>
+</html>
